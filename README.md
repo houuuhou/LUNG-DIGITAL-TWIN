@@ -48,3 +48,5 @@ https://huggingface.co/datasets/hourouu/index
 - **Augmentation:** horizontal flip, vertical flip, rotation ±15°, brightness/contrast jitter, Gaussian blur, Gaussian noise
 - **Architecture:** UNetV2 — 4 encoder levels (32→64→128→256 channels), bottleneck (512 channels), 4 symmetric decoder levels with skip connections
   
+   Here is a visualization of the results obtained by the Unet :
+<img width="1189" height="3227" alt="image" src="https://github.com/user-attachments/assets/57ea5b9a-ad43-4635-aceb-3f01ef051fdb" />
