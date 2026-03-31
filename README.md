@@ -33,7 +33,7 @@ https://huggingface.co/datasets/hourouu/LIDC_IDRI_res
 https://huggingface.co/datasets/hourouu/LIDC_IDRI_NORMALIZED
 
 ## data_prep.py
-- Selection of 40% of valid slices (non-empty) capped at 100 slices max and 20 min
+- Selection of valid slices (non-empty) capped at 120 slices max and 20 min
 - 10% ratio of empty slices
 - Resizing to 128x128x128
 - Saving to .h5 format
