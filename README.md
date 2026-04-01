@@ -38,15 +38,14 @@ https://huggingface.co/datasets/hourouu/LIDC_IDRI_NORMALIZED
 - Resizing to 128x128x128
 - Saving to .h5 format
 
-https://huggingface.co/datasets/hourouu/index
-
 ## 2d_Unet.py
 - **Input:** 128×128 grayscale CT slices, normalised to [0, 1]
 - **Output:** 128×128 binary lung mask
 - **Dataset:** 107,238 slices from 996 patients (LIDC-IDRI), stored as a single `slices.h5` HDF5 file on HuggingFace
 - **Split:** Patient-level (no patient appears in more than one split) — 80% train / 10% val / 10% test
 - **Augmentation:** horizontal flip, vertical flip, rotation ±15°, brightness/contrast jitter, Gaussian blur, Gaussian noise
-- **Architecture:** UNetV2 — 4 encoder levels (32→64→128→256 channels), bottleneck (512 channels), 4 symmetric decoder levels with skip connections
+- **Architecture:** 4 encoder levels (32→64→128→256 channels), bottleneck (512 channels), 4 symmetric decoder levels with skip connections; each level uses two 3×3 convolutions with Instance Normalisation and ReLU activations
+https://huggingface.co/datasets/hourouu/data_unet128A/tree/main
   
    Here is a visualization of the results obtained by the Unet :
 <img width="1156" height="1621" alt="image" src="https://github.com/user-attachments/assets/783875a6-ed81-46f0-8c26-bd5629d70076" />
