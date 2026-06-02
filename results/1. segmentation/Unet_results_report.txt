@@ -1,0 +1,55 @@
+=================================================================
+  UNet v17 — Lung Segmentation — Results Report
+=================================================================
+
+  Total epochs trained  : 39
+  Best epoch            : 7
+
+─────────────────────────────────────────────────────────────────
+  BEST VALIDATION CHECKPOINT (Epoch 7)
+─────────────────────────────────────────────────────────────────
+  Dice (overall)        : 0.9044
+  Dice (lung only)      : 0.8773
+  IoU                   : 0.8722
+  Sensitivity           : 0.9417
+  Specificity           : 0.9878
+  Val Loss              : 0.0895
+  Train Dice            : 0.9070
+  Train Loss            : 0.0365
+  LR at best epoch      : 0.000091
+
+─────────────────────────────────────────────────────────────────
+  LAST EPOCH (39)
+─────────────────────────────────────────────────────────────────
+  Dice (overall)        : 0.9018
+  Dice (lung only)      : 0.8771
+  IoU                   : 0.8692
+  Sensitivity           : 0.9428
+  Specificity           : 0.9878
+  Val Loss              : 0.1054
+
+─────────────────────────────────────────────────────────────────
+  HYPERPARAMETERS (from Cell 4)
+─────────────────────────────────────────────────────────────────
+  Batch size            : 8
+  LR (initial)          : 1e-4
+  Optimizer             : AdamW  (weight_decay=1e-4)
+  Scheduler             : LinearWarmup(5ep) → CosineWarmRestarts
+  Loss                  : 0.5·BCE + 0.5·Dice
+  Dropout enc shallow   : 0.10
+  Dropout enc deep      : 0.20
+  Dropout bottleneck    : 0.30
+  Dropout decoder       : 0.10
+  Max epochs            : 70
+  Early stopping patience: 20
+
+─────────────────────────────────────────────────────────────────
+  MODEL
+─────────────────────────────────────────────────────────────────
+  Architecture          : UNetV3 (2-D U-Net + spatial Dropout2d)
+  Base channels         : 32
+  Normalization         : InstanceNorm2d (affine=True)
+  Input                 : 1-channel CT slice
+  Task                  : Binary lung segmentation
+
+=================================================================
