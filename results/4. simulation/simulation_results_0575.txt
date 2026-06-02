@@ -1,0 +1,212 @@
+[RightLung] Read 12460 tetrahedra from LIDC-IDRI-0575_right_lung.msh
+[LeftLung] Read 10651 tetrahedra from LIDC-IDRI-0575_left_lung.msh
+============================================================
+  LUNG SIMULATION REPORT — RightLung
+  Patient  : LIDC-IDRI-0164
+  Mesh     : LIDC-IDRI-0575_right_lung.msh
+============================================================
+  Nodes            : 3060
+  Tetrahedra       : 12460
+  Rest volume      : 1155.674 ml
+  Breath rate      : 15.4 breaths/min
+  Cycle timing     : 1.3s insp / 2.6s exp
+  SI amplitude     : 24.5 mm (clamped to 10-25mm range)
+  Ventral amplitude: 5.0 mm
+  Lateral amplitude: 2.0 mm (outward)
+============================================================
+
+============================================================
+  LUNG SIMULATION REPORT — LeftLung
+  Patient  : LIDC-IDRI-0164
+  Mesh     : LIDC-IDRI-0575_left_lung.msh
+============================================================
+  Nodes            : 2655
+  Tetrahedra       : 10651
+  Rest volume      : 871.655 ml
+  Breath rate      : 15.4 breaths/min
+  Cycle timing     : 1.3s insp / 2.6s exp
+  SI amplitude     : 21.8 mm (clamped to 10-25mm range)
+  Ventral amplitude: 5.0 mm
+  Lateral amplitude: 2.0 mm (outward)
+============================================================
+
+
+============================================================
+  COMBINED LUNGS — Cycle 1/7
+============================================================
+  [RightLung]
+    FRC (end-exp. vol.)  : 1155.674 ml
+    End-insp. volume     : 1398.009 ml
+    Tidal volume (abs.)  : 242.334 ml
+    Diaphragm disp. (max): 23.44 mm
+  [LeftLung]
+    FRC (end-exp. vol.)  : 871.655 ml
+    End-insp. volume     : 1050.094 ml
+    Tidal volume (abs.)  : 178.439 ml
+    Diaphragm disp. (max): 21.03 mm
+  --------------------------------------------------------
+  TOTALS (both lungs combined)
+    End-expiration volume (FRC)      : 2027.329 ml
+    End-inspiration volume           : 2448.103 ml
+    Estimated TLC                    : 4054.659 ml
+    Tidal volume (absolute)          : 420.774 ml
+    Strain (VT/FRC)                  : +20.76%
+    True tidal volume (VT/TLC)       : +10.38%  OK
+    Avg diaphragm displacement       : 22.23 mm  OK
+============================================================
+
+
+============================================================
+  COMBINED LUNGS — Cycle 2/7
+============================================================
+  [RightLung]
+    FRC (end-exp. vol.)  : 1155.674 ml
+    End-insp. volume     : 1398.009 ml
+    Tidal volume (abs.)  : 242.334 ml
+    Diaphragm disp. (max): 23.44 mm
+  [LeftLung]
+    FRC (end-exp. vol.)  : 871.655 ml
+    End-insp. volume     : 1050.094 ml
+    Tidal volume (abs.)  : 178.439 ml
+    Diaphragm disp. (max): 21.03 mm
+  --------------------------------------------------------
+  TOTALS (both lungs combined)
+    End-expiration volume (FRC)      : 2027.329 ml
+    End-inspiration volume           : 2448.103 ml
+    Estimated TLC                    : 4054.659 ml
+    Tidal volume (absolute)          : 420.774 ml
+    Strain (VT/FRC)                  : +20.76%
+    True tidal volume (VT/TLC)       : +10.38%  OK
+    Avg diaphragm displacement       : 22.23 mm  OK
+============================================================
+
+
+============================================================
+  COMBINED LUNGS — Cycle 3/7
+============================================================
+  [RightLung]
+    FRC (end-exp. vol.)  : 1155.674 ml
+    End-insp. volume     : 1398.009 ml
+    Tidal volume (abs.)  : 242.334 ml
+    Diaphragm disp. (max): 23.44 mm
+  [LeftLung]
+    FRC (end-exp. vol.)  : 871.655 ml
+    End-insp. volume     : 1050.094 ml
+    Tidal volume (abs.)  : 178.439 ml
+    Diaphragm disp. (max): 21.03 mm
+  --------------------------------------------------------
+  TOTALS (both lungs combined)
+    End-expiration volume (FRC)      : 2027.329 ml
+    End-inspiration volume           : 2448.103 ml
+    Estimated TLC                    : 4054.659 ml
+    Tidal volume (absolute)          : 420.774 ml
+    Strain (VT/FRC)                  : +20.76%
+    True tidal volume (VT/TLC)       : +10.38%  OK
+    Avg diaphragm displacement       : 22.23 mm  OK
+============================================================
+
+
+============================================================
+  COMBINED LUNGS — Cycle 4/7
+============================================================
+  [RightLung]
+    FRC (end-exp. vol.)  : 1155.674 ml
+    End-insp. volume     : 1398.009 ml
+    Tidal volume (abs.)  : 242.334 ml
+    Diaphragm disp. (max): 23.44 mm
+  [LeftLung]
+    FRC (end-exp. vol.)  : 871.655 ml
+    End-insp. volume     : 1050.094 ml
+    Tidal volume (abs.)  : 178.439 ml
+    Diaphragm disp. (max): 21.03 mm
+  --------------------------------------------------------
+  TOTALS (both lungs combined)
+    End-expiration volume (FRC)      : 2027.329 ml
+    End-inspiration volume           : 2448.103 ml
+    Estimated TLC                    : 4054.659 ml
+    Tidal volume (absolute)          : 420.774 ml
+    Strain (VT/FRC)                  : +20.76%
+    True tidal volume (VT/TLC)       : +10.38%  OK
+    Avg diaphragm displacement       : 22.23 mm  OK
+============================================================
+
+
+============================================================
+  COMBINED LUNGS — Cycle 5/7
+============================================================
+  [RightLung]
+    FRC (end-exp. vol.)  : 1155.674 ml
+    End-insp. volume     : 1398.009 ml
+    Tidal volume (abs.)  : 242.334 ml
+    Diaphragm disp. (max): 23.44 mm
+  [LeftLung]
+    FRC (end-exp. vol.)  : 871.655 ml
+    End-insp. volume     : 1050.094 ml
+    Tidal volume (abs.)  : 178.439 ml
+    Diaphragm disp. (max): 21.03 mm
+  --------------------------------------------------------
+  TOTALS (both lungs combined)
+    End-expiration volume (FRC)      : 2027.329 ml
+    End-inspiration volume           : 2448.103 ml
+    Estimated TLC                    : 4054.659 ml
+    Tidal volume (absolute)          : 420.774 ml
+    Strain (VT/FRC)                  : +20.76%
+    True tidal volume (VT/TLC)       : +10.38%  OK
+    Avg diaphragm displacement       : 22.23 mm  OK
+============================================================
+
+
+============================================================
+  COMBINED LUNGS — Cycle 6/7
+============================================================
+  [RightLung]
+    FRC (end-exp. vol.)  : 1155.674 ml
+    End-insp. volume     : 1398.009 ml
+    Tidal volume (abs.)  : 242.334 ml
+    Diaphragm disp. (max): 23.44 mm
+  [LeftLung]
+    FRC (end-exp. vol.)  : 871.655 ml
+    End-insp. volume     : 1050.094 ml
+    Tidal volume (abs.)  : 178.439 ml
+    Diaphragm disp. (max): 21.03 mm
+  --------------------------------------------------------
+  TOTALS (both lungs combined)
+    End-expiration volume (FRC)      : 2027.329 ml
+    End-inspiration volume           : 2448.103 ml
+    Estimated TLC                    : 4054.659 ml
+    Tidal volume (absolute)          : 420.774 ml
+    Strain (VT/FRC)                  : +20.76%
+    True tidal volume (VT/TLC)       : +10.38%  OK
+    Avg diaphragm displacement       : 22.23 mm  OK
+============================================================
+
+
+============================================================
+  COMBINED LUNGS — Cycle 7/7
+============================================================
+  [RightLung]
+    FRC (end-exp. vol.)  : 1155.674 ml
+    End-insp. volume     : 1398.009 ml
+    Tidal volume (abs.)  : 242.334 ml
+    Diaphragm disp. (max): 23.44 mm
+  [LeftLung]
+    FRC (end-exp. vol.)  : 871.655 ml
+    End-insp. volume     : 1050.094 ml
+    Tidal volume (abs.)  : 178.439 ml
+    Diaphragm disp. (max): 21.03 mm
+  --------------------------------------------------------
+  TOTALS (both lungs combined)
+    End-expiration volume (FRC)      : 2027.329 ml
+    End-inspiration volume           : 2448.103 ml
+    Estimated TLC                    : 4054.659 ml
+    Tidal volume (absolute)          : 420.774 ml
+    Strain (VT/FRC)                  : +20.76%
+    True tidal volume (VT/TLC)       : +10.38%  OK
+    Avg diaphragm displacement       : 22.23 mm  OK
+============================================================
+
+  VALIDATION COMPLETE — Both Lungs Combined
+  7 cycles measured
+  Method   : Displacement Boundary Condition (DBC)
+============================================================
+

@@ -1,0 +1,306 @@
+==============================================================
+  VALIDATION REPORT — UNet2D (hourouu/model4)
+  Date      : 2026-05-01T18:39:38.131172
+  Volumes   : 20
+  Threshold : 0.5
+  Model     : hourouu/model4
+  Data      : Yousra0x0/validation_20_preprocessed
+==============================================================
+Metric                     Mean        Std        Min        Max     Median
+--------------------------------------------------------------------
+dice                     0.9499     0.0169     0.8984     0.9672     0.9560
+iou                      0.9051     0.0299     0.8155     0.9364     0.9158
+f1                       0.9499     0.0169     0.8984     0.9672     0.9560
+precision                0.9539     0.0075     0.9424     0.9664     0.9551
+recall                   0.9466     0.0328     0.8537     0.9832     0.9599
+sensitivity              0.9466     0.0328     0.8537     0.9832     0.9599
+specificity              0.9926     0.0030     0.9861     0.9976     0.9929
+hd95                     0.3707     0.5124     0.0000     1.4142     0.0000
+vol_error_%              2.6402     2.5781     0.1341     9.9448     1.6410
+
+## Ce que fait le code (étape par étape)
+
+### 1. Configuration et chargement du modèle
+
+- Installation des dépendances : `huggingface_hub`, `h5py`, `torch`, `tqdm`, `scipy`.
+- Authentification sur Hugging Face (jeton stocké dans les secrets Colab).
+- Définition des dépôts :
+  - **Données** : `Yousra0x0/validation_20_preprocessed` (20 fichiers `.h5` contenant images + masques).
+  - **Modèle** : `hourouu/model4` (poids UNet, fichier `best.pth`).
+  - **Résultats** : `Yousra0x0/unet_validation_20` (où seront uploadés les rapports).
+- Construction de l’architecture UNetV2 (conv Double + InstanceNorm + skip connections).
+- Chargement des poids du modèle (meilleur Dice = 0.9044 sur l’entraînement).
+- Modèle mis en mode `eval()` et déplacé sur GPU (CUDA).
+
+### 2. Inférence sur les 20 volumes de validation
+
+- Téléchargement intégral du dataset de validation (snapshot download).
+- Pour chaque fichier `.h5` :
+  - Lecture de l’image (array 3D, normalisé [0,1]) et du masque réel (binaire).
+  - Inférence **slice par slice** (le modèle est 2D) :
+    - Chaque coupe est passée dans le réseau → carte de probabilités.
+    - Seuillage à 0.5 → prédiction binaire.
+  - Reconstitution du volume 3D prédit.
+  - Calcul des métriques entre la prédiction et le masque réel.
+
+### 3. Métriques calculées
+
+Pour chaque volume, les indicateurs suivants sont produits :
+
+| Métrique            | Formule / signification |
+|---------------------|--------------------------|
+| **Dice**            | `2*|P∩T| / (|P|+|T|)` – similarité globale |
+| **IoU** (Jaccard)   | `|P∩T| / |P∪T|` |
+| **Précision**       | `TP / (TP+FP)` |
+| **Rappel** (sensibilité) | `TP / (TP+FN)` |
+| **F1**              | Moyenne harmonique précision/rappel |
+| **Spécificité**     | `TN / (TN+FP)` |
+| **HD95** (95e percentile de Hausdorff) | Distance maximale entre les contours (95%) – mesure la qualité des bords |
+| **Erreur volumique** | `|vol_pred - vol_gt| / vol_gt * 100` (en %) |
+
+*P = prédiction, T = vérité terrain, TP/FP/FN/TN = vrais/faux positifs/négatifs.*
+
+### 4. Agrégation des résultats
+
+- Calcul de la moyenne, écart‑type, min, max et médiane pour chaque métrique sur les 20 volumes.
+- Création d’un dictionnaire `summary` contenant :
+  - Informations générales (modèle, jeu de données, seuil, date)
+  - Les 5 statistiques pour chaque métrique.
+
+### 5. Sauvegarde locale et export
+
+Deux fichiers sont générés dans `/content/val_results/` :
+
+- **`validation_results.json`** : structure complète avec le résumé global et les métriques individuelles par patient.
+- **`validation_report.txt`** : rapport texte lisible, contenant :
+  - En‑tête (date, nombre de volumes, seuil, modèle)
+  - Tableau des métriques agrégées
+  - Section détaillée pour chaque volume (toutes ses métriques)
+
+### 6. Upload vers Hugging Face
+
+Les deux fichiers sont poussés vers le dataset `Yousra0x0/unet_validation_20` (dossier `/validation/`).  
+Un message de commit explicite est ajouté : `Validation UNet — 20 volumes`.
+
+--- Résultats par patient ---
+
+[coronacases_001]
+  dice            = 0.957432
+  iou             = 0.918340
+  precision       = 0.944789
+  recall          = 0.970417
+  f1              = 0.957431
+  sensitivity     = 0.970417
+  specificity     = 0.992118
+  hd95            = 0.000000
+  vol_error_%     = 2.712524
+
+[coronacases_002]
+  dice            = 0.962582
+  iou             = 0.927864
+  precision       = 0.951683
+  recall          = 0.973734
+  f1              = 0.962582
+  sensitivity     = 0.973734
+  specificity     = 0.988685
+  hd95            = 0.000000
+  vol_error_%     = 2.317049
+
+[coronacases_003]
+  dice            = 0.898386
+  iou             = 0.815517
+  precision       = 0.947990
+  recall          = 0.853714
+  f1              = 0.898385
+  sensitivity     = 0.853714
+  specificity     = 0.993391
+  hd95            = 1.414214
+  vol_error_%     = 9.944818
+
+[coronacases_004]
+  dice            = 0.967157
+  iou             = 0.936402
+  precision       = 0.951589
+  recall          = 0.983243
+  f1              = 0.967156
+  sensitivity     = 0.983243
+  specificity     = 0.988524
+  hd95            = 0.000000
+  vol_error_%     = 3.326434
+
+[coronacases_005]
+  dice            = 0.964257
+  iou             = 0.930981
+  precision       = 0.946545
+  recall          = 0.982645
+  f1              = 0.964257
+  sensitivity     = 0.982645
+  specificity     = 0.986060
+  hd95            = 0.000000
+  vol_error_%     = 3.813926
+
+[coronacases_006]
+  dice            = 0.962593
+  iou             = 0.927883
+  precision       = 0.958163
+  recall          = 0.967064
+  f1              = 0.962592
+  sensitivity     = 0.967064
+  specificity     = 0.992868
+  hd95            = 0.000000
+  vol_error_%     = 0.929006
+
+[coronacases_007]
+  dice            = 0.957802
+  iou             = 0.919022
+  precision       = 0.956794
+  recall          = 0.958813
+  f1              = 0.957802
+  sensitivity     = 0.958813
+  specificity     = 0.992943
+  hd95            = 0.000000
+  vol_error_%     = 0.210955
+
+[coronacases_008]
+  dice            = 0.963697
+  iou             = 0.929937
+  precision       = 0.956991
+  recall          = 0.970497
+  f1              = 0.963696
+  sensitivity     = 0.970497
+  specificity     = 0.991450
+  hd95            = 0.000000
+  vol_error_%     = 1.411299
+
+[coronacases_009]
+  dice            = 0.959770
+  iou             = 0.922651
+  precision       = 0.956257
+  recall          = 0.963308
+  f1              = 0.959769
+  sensitivity     = 0.963308
+  specificity     = 0.992567
+  hd95            = 0.000000
+  vol_error_%     = 0.737403
+
+[coronacases_010]
+  dice            = 0.942323
+  iou             = 0.890936
+  precision       = 0.945175
+  recall          = 0.939487
+  f1              = 0.942322
+  sensitivity     = 0.939487
+  specificity     = 0.992844
+  hd95            = 1.000000
+  vol_error_%     = 0.601798
+
+[radiopaedia_10_85902_1]
+  dice            = 0.938120
+  iou             = 0.883453
+  precision       = 0.964251
+  recall          = 0.913369
+  f1              = 0.938120
+  sensitivity     = 0.913369
+  specificity     = 0.995939
+  hd95            = 1.000000
+  vol_error_%     = 5.276867
+
+[radiopaedia_10_85902_3]
+  dice            = 0.952161
+  iou             = 0.908691
+  precision       = 0.943419
+  recall          = 0.961067
+  f1              = 0.952161
+  sensitivity     = 0.961067
+  specificity     = 0.986678
+  hd95            = 0.000000
+  vol_error_%     = 1.870685
+
+[radiopaedia_14_85914_0]
+  dice            = 0.954633
+  iou             = 0.913204
+  precision       = 0.953994
+  recall          = 0.955273
+  f1              = 0.954633
+  sensitivity     = 0.955273
+  specificity     = 0.991361
+  hd95            = 0.000000
+  vol_error_%     = 0.134071
+
+[radiopaedia_27_86410_0]
+  dice            = 0.944470
+  iou             = 0.894783
+  precision       = 0.946478
+  recall          = 0.942471
+  f1              = 0.944470
+  sensitivity     = 0.942471
+  specificity     = 0.993629
+  hd95            = 1.000000
+  vol_error_%     = 0.423364
+
+[radiopaedia_29_86490_1]
+  dice            = 0.950985
+  iou             = 0.906551
+  precision       = 0.965735
+  recall          = 0.936680
+  f1              = 0.950985
+  sensitivity     = 0.936680
+  specificity     = 0.997587
+  hd95            = 0.000000
+  vol_error_%     = 3.008573
+
+[radiopaedia_29_86491_1]
+  dice            = 0.962988
+  iou             = 0.928618
+  precision       = 0.956334
+  recall          = 0.969736
+  f1              = 0.962988
+  sensitivity     = 0.969736
+  specificity     = 0.993776
+  hd95            = 0.000000
+  vol_error_%     = 1.401399
+
+[radiopaedia_36_86526_0]
+  dice            = 0.964410
+  iou             = 0.931266
+  precision       = 0.966394
+  recall          = 0.962434
+  f1              = 0.964409
+  sensitivity     = 0.962434
+  specificity     = 0.994845
+  hd95            = 0.000000
+  vol_error_%     = 0.409780
+
+[radiopaedia_40_86625_0]
+  dice            = 0.936116
+  iou             = 0.879904
+  precision       = 0.942353
+  recall          = 0.929961
+  f1              = 0.936115
+  sensitivity     = 0.929961
+  specificity     = 0.995747
+  hd95            = 1.000000
+  vol_error_%     = 1.314942
+
+[radiopaedia_4_85506_1]
+  dice            = 0.937419
+  iou             = 0.882210
+  precision       = 0.963539
+  recall          = 0.912678
+  f1              = 0.937419
+  sensitivity     = 0.912678
+  specificity     = 0.994929
+  hd95            = 1.000000
+  vol_error_%     = 5.278565
+
+[radiopaedia_7_85703_0]
+  dice            = 0.921131
+  iou             = 0.853794
+  precision       = 0.959448
+  recall          = 0.885758
+  f1              = 0.921131
+  sensitivity     = 0.885758
+  specificity     = 0.995125
+  hd95            = 1.000000
+  vol_error_%     = 7.680432
+
