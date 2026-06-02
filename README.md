@@ -45,7 +45,7 @@ https://huggingface.co/datasets/hourouu/LIDC_IDRI_NORMALIZED
 - **Split:** Patient-level (no patient appears in more than one split) — 80% train / 10% val / 10% test
 - **Augmentation:** horizontal flip, vertical flip, rotation ±25°, brightness/contrast jitter, Gaussian blur, Gaussian noise, CoarseDropout,...
 - **Architecture:** 4 encoder levels (32→64→128→256 channels), bottleneck (512 channels), 4 symmetric decoder levels with skip connections; each level uses two 3×3 convolutions with Instance Normalisation and ReLU activations
-[https://huggingface.co/datasets/hourouu/data_unet128A/tree/main](https://huggingface.co/datasets/hourouu/model4/tree/main)
+https://huggingface.co/datasets/hourouu/model4/tree/main
   
    Here is a visualization of the results obtained by the Unet :
 <img width="1156" height="1621" alt="image" src="https://github.com/user-attachments/assets/783875a6-ed81-46f0-8c26-bd5629d70076" />
