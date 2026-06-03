@@ -43,10 +43,10 @@ https://huggingface.co/datasets/hourouu/LIDC_IDRI_NORMALIZED
 - **Output:** 128×128 binary lung mask
 - **Dataset:** 106,238 slices from 996 patients (LIDC-IDRI), stored as a single `slices.h5` HDF5 file on HuggingFace
 - **Split:** Patient-level (no patient appears in more than one split) — 80% train / 10% val / 10% test
-- **Augmentation** — Spatial (flip, rotate ±25°, elastic, grid distortion) and intensity (brightness/contrast, blur, noise, coarse dropout) transforms applied to the training set only.
+- **Augmentation:** Spatial (flip, rotate ±25°, elastic, grid distortion) and intensity (brightness/contrast, blur, noise, coarse dropout) transforms applied to the training set only.
 - **Architecture:** 4 encoder levels (32→64→128→256 channels), bottleneck (512 channels), 4 symmetric decoder levels with skip connections; each level uses two 3×3 convolutions with Instance Normalisation and ReLU activations.
-- **Loss** — Combined 50 % BCE + 50 % Dice loss, which balances pixel-level accuracy with overlap quality.
-- **Optimiser** — AdamW (`lr=1e-4`, `weight_decay=1e-4`) with a linear warmup followed by cosine annealing with warm restarts.
+- **Loss:** Combined 50 % BCE + 50 % Dice loss, which balances pixel-level accuracy with overlap quality.
+- **Optimiser:** AdamW (`lr=1e-4`, `weight_decay=1e-4`) with a linear warmup followed by cosine annealing with warm restarts.
 https://huggingface.co/datasets/hourouu/model4/tree/main
   
    Here is a visualization of the results obtained by the Unet :
