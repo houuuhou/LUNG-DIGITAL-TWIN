@@ -52,6 +52,24 @@ https://huggingface.co/datasets/hourouu/model4/tree/main
    Here is a visualization of the results obtained by the Unet :
 <p  align="center"><img width="555" height="555" alt="image" src="https://github.com/user-attachments/assets/783875a6-ed81-46f0-8c26-bd5629d70076" /></p>
 
+## reconstruction_surfacique_volumique.py
+
+- Input: LIDC-IDRI CT volume (NIfTI) + UNetV2 weights from `hourouu/model4`
+- Output: One STL per pipeline stage, two lateral lung STLs, two volumetric FEM meshes (.msh),
+  two JSON metric files all pushed to HuggingFace
+
+  ## Surface reconstruction
+    1. UNet2 inference slice by slice → binary 3D mask (NIfTI)
+    2. Trachea removal: slice-by-slice detection, 3D trajectory estimation,
+       radial suppression + morphological separation of the two lobes
+    3. Marching Cubes → surface mesh (two intermediate STLs: with and without trachea)
+    4. Taubin smoothing (20 iterations)
+    5. QEM decimation to 60,000 faces  geometric fidelity evaluated by HD95 and MSD
+    6. Left/right split based on centroid X (DICOM LPS convention) → one STL per lung
+
+  ## Volumetric meshing & FEM validation
+    7. Tetrahedral mesh generation via Gmsh for each lung
+    8. FEM validation: volume conservation, aspect ratio (R/3r), sliver detection
 
 ## simulation.py
 * Tetrahedral meshes of both lungs loaded from patient-specific `.msh` files
