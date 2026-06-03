@@ -56,7 +56,7 @@ https://huggingface.co/datasets/hourouu/model4/tree/main
 ## simulation.py
 * Tetrahedral meshes of both lungs loaded from patient-specific `.msh` files
 * Displacement boundary conditions applied per cycle; SI: 10–25 mm, ventral: 5 mm, lateral: 2 mm
-* Sinusoidal breathing waveform — 1.3 s inspiration / 2.6 s expiration (~15 breaths/min)
+* Sinusoidal breathing waveform: 1.3 s inspiration / 2.6 s expiration (~15 breaths/min)
 * Both lungs simulated independently and synchronised via a shared coordinator
 * Per-cycle metrics logged over 7 cycles: tidal volume, VT/TLC ratio, FRC, diaphragm displacement, volumetric strain
 * Clinical validation target: VT within [400,500] ml
