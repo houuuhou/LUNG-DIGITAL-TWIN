@@ -43,10 +43,20 @@ https://huggingface.co/datasets/hourouu/LIDC_IDRI_NORMALIZED
 - **Output:** 128×128 binary lung mask
 - **Dataset:** 106,238 slices from 996 patients (LIDC-IDRI), stored as a single `slices.h5` HDF5 file on HuggingFace
 - **Split:** Patient-level (no patient appears in more than one split) — 80% train / 10% val / 10% test
-- **Augmentation:** horizontal flip, vertical flip, rotation ±25°, brightness/contrast jitter, Gaussian blur, Gaussian noise, CoarseDropout,...
-- **Architecture:** 4 encoder levels (32→64→128→256 channels), bottleneck (512 channels), 4 symmetric decoder levels with skip connections; each level uses two 3×3 convolutions with Instance Normalisation and ReLU activations
+- **Augmentation** — Spatial (flip, rotate ±25°, elastic, grid distortion) and intensity (brightness/contrast, blur, noise, coarse dropout) transforms applied to the training set only.
+- **Architecture:** 4 encoder levels (32→64→128→256 channels), bottleneck (512 channels), 4 symmetric decoder levels with skip connections; each level uses two 3×3 convolutions with Instance Normalisation and ReLU activations.
+- **Loss** — Combined 50 % BCE + 50 % Dice loss, which balances pixel-level accuracy with overlap quality.
+- **Optimiser** — AdamW (`lr=1e-4`, `weight_decay=1e-4`) with a linear warmup followed by cosine annealing with warm restarts.
 https://huggingface.co/datasets/hourouu/model4/tree/main
   
    Here is a visualization of the results obtained by the Unet :
-<img width="1156" height="1621" alt="image" src="https://github.com/user-attachments/assets/783875a6-ed81-46f0-8c26-bd5629d70076" />
+<p  align="center"><img width="555" height="555" alt="image" src="https://github.com/user-attachments/assets/783875a6-ed81-46f0-8c26-bd5629d70076" /></p>
 
+
+## simulation.py
+* Tetrahedral meshes of both lungs loaded from patient-specific `.msh` files
+* Displacement boundary conditions applied per cycle; SI: 10–25 mm, ventral: 5 mm, lateral: 2 mm
+* Sinusoidal breathing waveform — 1.3 s inspiration / 2.6 s expiration (~15 breaths/min)
+* Both lungs simulated independently and synchronised via a shared coordinator
+* Per-cycle metrics logged over 7 cycles: tidal volume, VT/TLC ratio, FRC, diaphragm displacement, volumetric strain
+* Clinical validation target: VT within [400,500] ml
