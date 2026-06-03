@@ -7,12 +7,24 @@ import os
 # =============================================================================
 # LUNG RESPIRATORY SIMULATION — SOFA FRAMEWORK
 # Master's Thesis Implementation
-# METHOD: Displacement Boundary Condition (DBC)
-# BC: SI=10-25mm (clamped), Ventral=4mm, Lateral=1.5mm (outward)
-# TIMING: 1.3s insp / 2.6s exp
+#
+# PIPELINE OVERVIEW:
+#   1. Load patient-specific tetrahedral meshes (right & left lung) from .msh files
+#   2. Compute rest volume and geometric properties at initialisation
+#   3. Drive breathing motion via Displacement Boundary Conditions (DBC):
+#        - Superior-Inferior (SI) : diaphragm descent, 10–25 mm (clamped)
+#        - Ventral               : anterior chest wall expansion, ~5 mm
+#        - Lateral               : outward rib-cage expansion, ~2 mm
+#   4. Animate using a cosine-shaped breathing waveform (1.3 s insp / 2.6 s exp)
+#   5. Sample volumetric data per cycle and report clinical metrics:
+#        - FRC, end-inspiratory volume, tidal volume, VT/TLC, diaphragm displacement
+#   6. Coordinate both lungs via LungCoordinator and log combined results to file
+#
+
+# Method   : Displacement Boundary Condition (DBC)
+# Target   : VT [400-500]ml |  Diaphragm displacement 10–25 mm
 # =============================================================================
 
-# FIX: Restore original log file name
 _log_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'simulation_results_0100.txt')
 _log = open(_log_path, 'w', buffering=1)
 
@@ -21,6 +33,7 @@ def log(msg=''):
     _log.flush()
 
 def read_tets_from_msh(filepath):
+    """Parse tetrahedral element connectivity from a Gmsh .msh file (element type 4)."""
     tets = []
     try:
         with open(filepath, 'r') as f:
@@ -46,26 +59,25 @@ def read_tets_from_msh(filepath):
     return tets
 
 def compute_volume(positions, tets_np):
+    """Total mesh volume in mm³ via scalar triple product over all tetrahedra."""
     a = positions[tets_np[:, 0]]; b = positions[tets_np[:, 1]]
     c = positions[tets_np[:, 2]]; d = positions[tets_np[:, 3]]
     return np.abs(np.einsum('ij,ij->i', b - a, np.cross(c - a, d - a))).sum() / 6.0
 
 class LungCoordinator:
     """
-    Collects per-cycle data from both lungs and prints a combined report
-    once both have reported for the same cycle number.
+    Collects per-cycle metrics from both lungs and prints a combined report
+    once both have submitted data for the same cycle number.
     """
     def __init__(self, max_cycles):
         self.max_cycles  = max_cycles
         self._data       = {}   # cycle_num -> {lung_name: dict}
 
     def report_cycle(self, cycle_num, lung_name, data: dict):
-        """Called by each BreathingController at the end of a cycle."""
         if cycle_num not in self._data:
             self._data[cycle_num] = {}
         self._data[cycle_num][lung_name] = data
 
-        # Print combined report only when both lungs have checked in
         if len(self._data[cycle_num]) == 2:
             self._print_combined(cycle_num)
 
@@ -73,15 +85,12 @@ class LungCoordinator:
         sides   = self._data[cycle_num]
         names   = list(sides.keys())
 
-        # Sum volumetric quantities across both lungs
         ve_total          = sum(s['ve']          for s in sides.values())
         vi_total          = sum(s['vi']          for s in sides.values())
         tlc_total         = sum(s['tlc']         for s in sides.values())
         vt_abs_total      = sum(s['vt_absolute'] for s in sides.values())
         strain_total      = 100.0 * (vi_total - ve_total) / ve_total  if ve_total else 0.0
         vt_tlc_total      = 100.0 * (vi_total - ve_total) / tlc_total if tlc_total else 0.0
-
-        # Average diaphragm displacement (mean of the two sides)
         disp_avg          = sum(s['max_disp'] for s in sides.values()) / len(sides)
 
         vol_ok  = '  OK' if 7.0 <= abs(vt_tlc_total) <= 13.0 else '  WARNING: outside clinical 8-12% target (VT/TLC)'
@@ -173,14 +182,14 @@ def createScene(rootNode):
                 self.centroid  = None
                 self.w         = None
 
+                # 1:2 inspiration-to-expiration ratio
                 self.t        = 0.0
                 self.t_insp   = 1.3
                 self.t_exp    = 2.6
                 self.t_cycle  = 3.9
 
-                # Direction-specific amplitudes (De Groote et al. 1997)
-                self.d_ventral = 5.0      # anterior expansion: 3-5mm
-                self.d_lateral = 2.0     # lateral expansion: 1-2mm
+                self.d_ventral = 5.0      # anterior expansion (mm)
+                self.d_lateral = 2.0      # lateral expansion (mm)
 
                 self.vol_ref        = None
                 self.cycle_count    = 0
@@ -199,17 +208,19 @@ def createScene(rootNode):
                 self.rest_pos = pos.copy()
                 self.centroid = pos.mean(axis=0)
 
-                zmin, zmax      = pos[:, 2].min(), pos[:, 2].max()
+                zmin, zmax  = pos[:, 2].min(), pos[:, 2].max()
                 lung_height = zmax - zmin
 
-                # SI amplitude with physiological clamp (10-25mm range)
-                d_SI_raw = lung_height * 0.13
+                # SI amplitude scaled from lung height, clamped to 10–25 mm
+                d_SI_raw  = lung_height * 0.13
                 self.d_SI = min(25.0, max(10.0, d_SI_raw))
 
-                norm_z   = (pos[:, 2] - zmin) / (zmax - zmin) # 0 at base, 1 at apex
-                self.w   = 1.0 - norm_z                           # linear: 1 at base, 0 at apex
-                    # hard clamp: top → no motion
-                self.base_z_ref = pos[pos[:, 2] <= zmin + (zmax - zmin) * 0.07, 2].mean()
+                # Linear weight: 1 at base (diaphragm), 0 at apex
+                norm_z = (pos[:, 2] - zmin) / (zmax - zmin)
+                self.w = 1.0 - norm_z
+
+                # Mean z of the basal 7% of nodes — used as diaphragm reference
+                self.base_z_ref = pos[pos[:, 2] <= zmin + lung_height * 0.07, 2].mean()
 
                 if len(self.tets) > 0:
                     self.vol_ref = compute_volume(pos, self.tets)
@@ -221,7 +232,6 @@ def createScene(rootNode):
                 log('=' * 60)
                 log(f'  Nodes            : {len(pos)}')
                 log(f'  Tetrahedra       : {len(self.tets)}')
-                # FIX: Volume in ml (1 ml = 1 cm³ = 1000 mm³)
                 log(f'  Rest volume      : {self.vol_ref/1e3:.3f} ml' if self.vol_ref else '  Rest volume      : N/A')
                 log(f'  Breath rate      : {60/self.t_cycle:.1f} breaths/min')
                 log(f'  Cycle timing     : {self.t_insp}s insp / {self.t_exp}s exp')
@@ -232,6 +242,7 @@ def createScene(rootNode):
                 log()
 
             def _phi(self, t):
+                """Cosine waveform returning 0 at end-expiration and 1 at peak inspiration."""
                 tc = t % self.t_cycle
                 if tc < self.t_insp:
                     return 0.5 * (1.0 - math.cos(math.pi * tc / self.t_insp))
@@ -250,11 +261,10 @@ def createScene(rootNode):
 
                 new_pos = self.rest_pos.copy()
 
-                # ========== 1. SI displacement (cranial-caudal) ==========
+                # Superior-Inferior: displace nodes downward along z, weighted by w
                 new_pos[:, 2] -= phi * self.d_SI * self.w
 
-                # ========== 2. ANISOTROPIC horizontal expansion ==========
-                # Radial outward from lung's own centroid, scaled anisotropically
+                # Anisotropic radial expansion: ventral (y) > lateral (x)
                 xy   = self.rest_pos[:, :2] - self.centroid[:2]
                 norm = np.linalg.norm(xy, axis=1, keepdims=True)
                 norm = np.where(norm < 1e-6, 1.0, norm)
@@ -265,7 +275,6 @@ def createScene(rootNode):
                 aniso_disp[:, 1] = self.d_ventral  * radial_unit[:, 1]
 
                 new_pos[:, :2] += phi * self.w[:, None] * aniso_disp
-                # ==========================================================
 
                 with self.dofs.position.writeable() as p:
                     p[:] = new_pos
@@ -273,17 +282,16 @@ def createScene(rootNode):
                 if self.cycle_count >= self.max_cycles or self.vol_ref is None:
                     return
 
-                # Track max diaphragm displacement
+                # Track peak diaphragm displacement across the cycle
                 zmin0, zmax0 = self.rest_pos[:, 2].min(), self.rest_pos[:, 2].max()
                 base_mask    = self.rest_pos[:, 2] <= zmin0 + (zmax0 - zmin0) * 0.07
                 disp         = abs(new_pos[base_mask, 2].mean() - self.base_z_ref)
                 self.max_disp_cycle = max(self.max_disp_cycle, disp)
 
-                # Sample volume once at peak inspiration
+                # Sample volume once at peak inspiration (phi crosses 0.98)
                 if prev_phi < phi and phi > 0.98 and self.cycle_vol_insp is None:
                     self.cycle_vol_insp = compute_volume(new_pos, self.tets)
 
-                # Cycle detection using absolute time threshold
                 if self.t >= self.next_cycle_t:
                     self.next_cycle_t += self.t_cycle
                     self.cycle_count  += 1
@@ -291,27 +299,16 @@ def createScene(rootNode):
                     vi = self.cycle_vol_insp if self.cycle_vol_insp else self.vol_ref
                     ve = self.vol_ref
 
-                    # FIX: Primary metric = VT/TLC (clinical standard, target 8-12%)
-                    # FRC (ve) ≈ 55% TLC in healthy adults
-                    # =========================================================
-                    # VOLUME CHANGE CALCULATIONS
-                    # =========================================================
-                    
-                    # 1. Absolute Tidal Volume (mL)
-                    vt_absolute = (vi - ve) / 1000.0  # Convert mm³ to mL
-                    # 1 mm³ = 0.001 mL
-                    
-                    # 2. Strain (VT/FRC) - Your original calculation
+                    # Tidal volume in ml (mm³ → ml)
+                    vt_absolute = (vi - ve) / 1000.0
+
+                    # VT as a fraction of FRC
                     strain_percent = 100.0 * (vi - ve) / ve
-                    
-                    # 3. True Tidal Volume Percentage (VT/TLC) - Clinical standard 8-12%
-                    # Using physiological relationship: FRC = 40% of TLC (Levitsky, 2018)
-                    # Therefore: TLC = ve / 0.4
-                    tlc_estimated = ve / 0.5
+
+                    # VT as a fraction of TLC; TLC estimated as FRC / 0.5
+                    tlc_estimated  = ve / 0.5
                     vt_tlc_percent = 100.0 * (vi - ve) / tlc_estimated
 
-                    # Report this lung's data to the coordinator; combined
-                    # totals are printed once both lungs have checked in.
                     self.coordinator.report_cycle(self.cycle_count, name, {
                         've':          ve,
                         'vi':          vi,
