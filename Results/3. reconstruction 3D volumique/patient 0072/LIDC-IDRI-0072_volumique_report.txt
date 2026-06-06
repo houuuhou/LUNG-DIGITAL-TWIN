@@ -1,0 +1,79 @@
+=================================================================
+  Volumetric Mesh Report (FEM) — LIDC-IDRI-0072
+=================================================================
+
+  Generated : 2026-06-05 20:35:17
+
+─────────────────────────────────────────────────────────────────
+  SPLIT — RIGHT / LEFT LUNGS
+─────────────────────────────────────────────────────────────────
+
+  [ RIGHT LUNG ]
+    Vertices                      : 14,982
+    Faces                         : 29,960
+    Watertight                    : True
+    Volume                        : 791.307 mL  (791307.347 mm³)
+    Surface                       : 530.756 cm²
+    Centroid (X,Y,Z)              : 117.82, 264.23, 133.47 mm
+    File                          : LIDC-IDRI-0072_right_lung_mesh.stl
+    File size                     : 1.498 MB
+
+  [ LEFT LUNG ]
+    Vertices                      : 15,022
+    Faces                         : 30,040
+    Watertight                    : True
+    Volume                        : 929.424 mL  (929424.309 mm³)
+    Surface                       : 565.105 cm²
+    Centroid (X,Y,Z)              : 119.61, 116.46, 134.92 mm
+    File                          : LIDC-IDRI-0072_left_lung_mesh.stl
+    File size                     : 1.502 MB
+
+─────────────────────────────────────────────────────────────────
+  FEM PARAMETERS
+─────────────────────────────────────────────────────────────────
+  Meshing algorithm               : Frontal-Delaunay (Gmsh algo 4)
+  Target element size             : 7.0 mm
+  CharacteristicLengthMin         : 5.6 mm
+  CharacteristicLengthMax         : 7.0 mm
+  Optimizer                       : Netgen
+  Smoothing passes                : 5
+  Element type                    : Tetrahedra (4-node, order 1)
+  Seuil erreur volume             : 5.0 %
+  Seuil aspect ratio (R/3r)       : ≤ 3.0
+  Seuil sliver vol. norm.         : 0.001
+
+─────────────────────────────────────────────────────────────────
+  FEM VALIDATION RESULTS
+─────────────────────────────────────────────────────────────────
+  Side      Nodes         Tets          V surf mL     V tet mL      Err vol %     AR mean       AR p95        Slivers%  
+  ────────  ────────────  ────────────  ────────────  ────────────  ────────────  ────────────  ────────────  ──────────
+  right     2,840         12,422        791.307       786.021       0.668 %       1.199         3.126         0.0 %     
+  left      3,228         14,427        929.424       924.205       0.562 %       1.188         3.02          0.0 %     
+
+─────────────────────────────────────────────────────────────────
+  FEM QUALITY VERDICTS
+─────────────────────────────────────────────────────────────────
+
+  [ RIGHT ]
+    Volume conservation           : conforme 
+    Aspect ratio < 3.0            : conforme 
+    Slivers < 1 %                 : conforme 
+    Global verdict                : CONFORME 
+    Generation time               : 8.46 s
+
+  [ LEFT ]
+    Volume conservation           : conforme 
+    Aspect ratio < 3.0            : conforme 
+    Slivers < 1 %                 : conforme 
+    Global verdict                : CONFORME 
+    Generation time               : 5.36 s
+
+─────────────────────────────────────────────────────────────────
+  FILES GENERATED
+─────────────────────────────────────────────────────────────────
+  LIDC-IDRI-0072_right_lung_mesh.stl: 1.50 MB
+  LIDC-IDRI-0072_left_lung_mesh.stl: 1.50 MB
+  LIDC-IDRI-0072_right_lung.msh   : 0.64 MB
+  LIDC-IDRI-0072_left_lung.msh    : 0.74 MB
+
+=================================================================

@@ -1,0 +1,49 @@
+=================================================================
+  Surface Mesh Report — LIDC-IDRI-0370
+=================================================================
+
+  Generated : 2026-06-05 20:16:38
+
+─────────────────────────────────────────────────────────────────
+  PIPELINE PARAMETERS
+─────────────────────────────────────────────────────────────────
+  Taubin lambda                   : 0.5
+  Taubin mu                       : -0.53
+  Taubin iterations               : 20
+  QEM target faces                : 60,000
+  QEM strategy                    : quadric
+  Hausdorff samples               : 10,000
+  Voxel spacing                   : 1.000 x 1.000 x 1.000 mm
+
+─────────────────────────────────────────────────────────────────
+  MESH STAGES
+─────────────────────────────────────────────────────────────────
+  Stage                             Vertices      Faces         Watertight   Volume mL    Surface cm²    File MB  
+  ────────────────────────────────  ────────────  ────────────  ───────────  ───────────  ─────────────  ─────────
+  01_mesh_brut_avec_trachee         431,244       862,544       True         5450.135     3223.389       43.127   
+  02_mesh_brut_sans_trachee         371,852       743,696       True         5232.655     2750.248       37.185   
+  03_mesh_lisse_taubin              371,852       743,696       True         5221.263     2495.15        37.185   
+  04_mesh_qem                       30,004        60,000        True         5220.772     2495.594       3.0      
+
+─────────────────────────────────────────────────────────────────
+  QEM REDUCTION QUALITY
+─────────────────────────────────────────────────────────────────
+  Hausdorff 95% symmetric         : 4.9054 mm
+  Hausdorff 95% A→B               : 4.8689 mm
+  Hausdorff 95% B→A               : 4.9054 mm
+  Mean Surface Distance           : 2.5012 mm
+  Max distance A→B                : 8.7106 mm
+  Faces before QEM                : 743,696
+  Faces after QEM                 : 60,000
+  Compression ratio               : 12.395×
+
+─────────────────────────────────────────────────────────────────
+  FILES GENERATED
+─────────────────────────────────────────────────────────────────
+  LIDC-IDRI-0370_01_mesh_brut_avec_trachee.stl: 43.13 MB
+  LIDC-IDRI-0370_02_mesh_brut_sans_trachee.stl: 37.18 MB
+  LIDC-IDRI-0370_03_mesh_lisse_taubin.stl: 37.18 MB
+  LIDC-IDRI-0370_lung_mesh_reduced.stl: 3.00 MB
+  LIDC-IDRI-0370_04_mesh_qem.stl  : 3.00 MB
+
+=================================================================
